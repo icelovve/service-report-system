@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model REQ_DOCUMENT {
+  REQ_DOCUMENT_ID  Int  
+  DOCUMENT_CODE    String @db.NVarChar(1000)
+  DOCUMENT_NAME_TH String @db.NVarChar(1000)
+  REQUEST_TYPE     String @db.NVarChar(1000)
+  RECORD_STATUS    String @db.NVarChar(1000)
+
+  @@id([REQ_DOCUMENT_ID])
+}
+
+
+model VW_REQ_STUDENT_REPORT {
+  REQ_YDC_ID       String  @id @db.NChar(15)
+  REQUEST_YEAR     Int?
+  REQUEST_MONTH    Int?
+  REQ_DOCUMENT_ID  Int?
+  DOCUMENT_CODE    String? @db.NChar(10)
+  DOCUMENT_NAME_TH String? @db.NVarChar(255)
+  TOTAL_REQUESTS   Int?
+  E_SERVICE        Int?
+  WORK_IN          Int?
+}
+
+model VW_REQ_TEACHER_REPORT {
+  REQ_YDC_ID       String  @id @db.NChar(15)
+  REQUEST_YEAR     Int?
+  REQUEST_MONTH    Int?
+  REQ_DOCUMENT_ID  Int?
+  DOCUMENT_CODE    String? @db.NChar(10)
+  DOCUMENT_NAME_TH String? @db.NVarChar(255)
+  TOTAL_REQUESTS   Int?
+  E_SERVICE        Int?
+  WORK_IN          Int?
+}
+
+model REQ_GROUP_REPORT {
+  id              Int               @id @default(autoincrement())
+  Note            String            @db.NVarChar(255)
+  createdAt       DateTime?         @default(now())
+  REQ_MORE_REPORT REQ_MORE_REPORT[] @relation("GroupToReports")
+}
+
+model REQ_MORE_REPORT {
+  id               Int              @default(autoincrement())
+  REQ_YDC_ID       String           @db.NChar(20)
+  REQUEST_YEAR     Int
+  REQUEST_MONTH    Int
+  REQ_DOCUMENT_ID  Int
+  DOCUMENT_CODE    String           @db.NChar(10)
+  DOCUMENT_NAME_TH String           @db.NVarChar(255)
+  TOTAL_REQUESTS   Int
+  E_SERVICE        Int
+  WORK_IN          Int
+  GROUP_ID         Int
+  group            REQ_GROUP_REPORT @relation("GroupToReports", fields: [GROUP_ID], references: [id])
+
+  @@id([id])
+}
